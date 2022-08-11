@@ -70,4 +70,11 @@ class AFHttp {
         return parameters
     }
     
+    class func paramsContactWith(id: Int) -> Parameters {
+        let parameters: Parameters = [
+            "id" : id
+        ]
+        return parameters
+    }
+    
 }

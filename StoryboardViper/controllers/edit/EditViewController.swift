@@ -2,41 +2,82 @@
 import Alamofire
 import UIKit
 
-class EditViewController: BaseViewController {
 
+protocol EditRequestProtocol {
+    func apiCallPost(id: Int)
+    func apiEditPost(id: Int, post: Post)
+}
+
+protocol EditResponseProtocol {
+    func onCallPost(post: Post)
+    func onEditPost(result: Bool)
+}
+
+
+class EditViewController: BaseViewController, EditResponseProtocol {
+    
+    var presenter: EditRequestProtocol!
+    
     @IBOutlet weak var bText: UITextField!
     @IBOutlet weak var nText: UITextField!
     
-    var editPost: Post?
+    var ContactID: String = "1"
+    var Information : Post = Post()
+    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        initViews()
+        configureViper()
+        presenter.apiCallPost(id: Int(ContactID) ?? 0)
     }
 
     func initViews()  {
-        nText.text = editPost?.title
-        bText.text = editPost?.body
+       
+        
+        DispatchQueue.main.async {
+            self.bText.text = self.Information.body!
+            self.nText.text = self.Information.title!
+        }
         
     }
-
-    func apiEditPost(post: Post){
-        showProgress()
-        AFHttp.put(url: AFHttp.API_POST_UPDATE + post.id!, params: AFHttp.paramsPostUpdate(post: post), handler: { response in
-            self.hideProgress()
-            switch response.result{
-            case .success:
-                print(response.result)
-                
-            case let .failure(error):
-                print(error)
-            }
-        })
+    
+    func configureViper(){
+        let manager = HttpManager()
+        let presenter = EditPresenter()
+        let interactor = EditInteractor()
+        let routing = EditRouting()
+        
+        presenter.controller = self
+        
+        self.presenter = presenter
+        presenter.interactor = interactor
+        presenter.routing = routing
+        routing.viewController = self
+        interactor.manager = manager
+        interactor.response = self
     }
     
+    func onCallPost(post: Post) {
+        self.hideProgress()
+        Information = post
+        initViews()
+    }
+    
+    func onEditPost(result: Bool) {
+        self.hideProgress()
+        if result {
+            self.dismiss(animated: true, completion: nil)
+        }else{
+            
+        }
+    }
+    
+
+
+    
     @IBAction func editTapped(_ sender: Any) {
-        apiEditPost(post: Post(id: (editPost?.id!)!, title: nText.text!, body: bText.text!))
+        presenter.apiEditPost(id: Int(ContactID)!, post: Post(title: nText.text!, body: bText.text!))
     }
     
 }

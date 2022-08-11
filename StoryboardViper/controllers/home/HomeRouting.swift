@@ -16,7 +16,7 @@ class HomeRouting: HomeRoutingProtocol{
     func navigateEditScreen() {
         let vc = EditViewController(nibName: "EditViewController", bundle: nil)
         
-        viewController.callEditViewController(post: vc.editPost!)
+//        viewController.callEditViewController(post: vc.editPost!)
        
     }
     

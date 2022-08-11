@@ -86,12 +86,21 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func callEditViewController(post: Post){
+    func callEditViewController(id: String){
         let vc = EditViewController(nibName: "EditViewController", bundle: nil)
+        vc.ContactID = id
         let navigationController = UINavigationController(rootViewController: vc)
+        print(vc.ContactID)
         self.present(navigationController, animated: true, completion: nil)
-        vc.editPost = post
     }
+    
+//    func callEditViewController(post: Post){
+//        let vc = EditViewController(nibName: "EditViewController", bundle: nil)
+//        let navigationController = UINavigationController(rootViewController: vc)
+//        self.present(navigationController, animated: true, completion: nil)
+//
+//    }
+    
     
     
     // MARK: -- Actions
@@ -155,7 +164,8 @@ class HomeViewController: BaseViewController, UITableViewDelegate, UITableViewDa
             print("Complete Here")
             
             completion(true)
-            self.callEditViewController(post: post)
+            
+            self.callEditViewController(id: post.id!)
         }
     }
 
